@@ -4,7 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import * as SecureStore from 'expo-secure-store'
-import { ClerkProvider } from '@clerk/clerk-expo'
+import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -69,14 +69,16 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(chat)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" options={{ headerShown: false }}/>
-        <Stack.Screen name="notification/notification" options={{ headerShown: false }} />
-      </Stack>
+      <ClerkLoaded>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(chat)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" options={{ headerShown: false }}/>
+          <Stack.Screen name="notification/notification" options={{ headerShown: false }} />
+        </Stack>
+      </ClerkLoaded>
     </ClerkProvider>
   );
 }

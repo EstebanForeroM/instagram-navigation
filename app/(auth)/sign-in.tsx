@@ -6,6 +6,7 @@ import TextField from '@/components/TextField'
 import CustomButton from '@/components/CustomButton'
 import { Link, router } from 'expo-router'
 import { useSignIn } from '@clerk/clerk-expo'
+import LogInOAuth from '@/components/LogInGoogle'
 
 interface SignInFormData {
   email: string,
@@ -91,12 +92,7 @@ const SignIn = () => {
         onPress={logIn}
       />
 
-      <CustomButton
-        containerStyles='w-full px-8'
-        buttonStyles='bg-secondary'
-        text='Log in with google'
-        onPress={logIn}
-      />
+      <LogInOAuth strategy='oauth_google'/>
 
       <View className='w-full px-8'>
         <Text className='text-white text-sm font-pbold mt-8'>

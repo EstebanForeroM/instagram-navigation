@@ -3,15 +3,17 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import TextField from '@/components/TextField'
 import GoBackHeader from '@/components/GoBackHeader'
 import { router } from 'expo-router'
+import { useUser } from '@clerk/clerk-expo'
 
 const Inbox = () => {
+  const { user } = useUser()
 
   const [searchResult, setSearchResult] = useState('')
 
   return (
     <SafeAreaView className='bg-background w-screen h-full'>
       <GoBackHeader
-        text='UserName'
+        text={ user?.username ?? 'Invalid User'}
         onPressBack={() => router.back()}
       />
       <TextField
