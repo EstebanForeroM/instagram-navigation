@@ -43,6 +43,7 @@ const SignIn = () => {
         containerStyles='w-full px-8'
         value={form.password}
         placeHolder='Enter your password'
+        secureTextField={true}
         onChange={(newPassword) => setForm({
           ...form,
           password: newPassword

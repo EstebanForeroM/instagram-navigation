@@ -26,7 +26,7 @@ const HomeHeader = () => {
 
         <IconButton
           icon = {<Entypo name="notification" size={24} color="white" />}
-          onPress={() => {}}
+          onPress={() => {router.push('/notification/notification')}}
         />
 
         <IconButton

@@ -2,7 +2,6 @@
 import { View, Text } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import CustomInputTextField from '@/components/CustomInputTextField'
 import TextField from '@/components/TextField'
 import CustomButton from '@/components/CustomButton'
 import { Link } from 'expo-router'
@@ -58,6 +57,7 @@ const SignUp = () => {
         containerStyles='w-full px-8'
         value={form.password}
         placeHolder='Enter your password'
+        secureTextField={true}
         onChange={(newPassword) => setForm({
           ...form,
           password: newPassword

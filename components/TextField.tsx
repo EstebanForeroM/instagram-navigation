@@ -7,6 +7,7 @@ interface Props {
   placeHolder: string,
   containerStyles?: string,
   textFieldStyles?: string,
+  secureTextField?: boolean
   onChange: (text: string) => void
 }
 
@@ -20,6 +21,7 @@ const TextField = (props: Props) => {
           value={props.value} 
           placeholder={props.placeHolder}
           onChangeText={props.onChange}
+          secureTextEntry={props.secureTextField}
         />
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
