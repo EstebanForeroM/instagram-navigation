@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import TextField from '@/components/TextField'
 import CustomButton from '@/components/CustomButton'
 import { Link, router } from 'expo-router'
+import { useSignIn } from '@clerk/clerk-expo'
 
 interface SignInFormData {
   email: string,
@@ -12,22 +13,55 @@ interface SignInFormData {
 }
 
 const SignIn = () => {
-
   const [form, setForm] = useState<SignInFormData>({
     email: '',
     password: '' 
   })
 
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const { signIn, setActive, isLoaded } = useSignIn()
+
   const logIn = async () => {
-    router.replace('/(tabs)/home')
+    if (!isLoaded) {
+      return
+    }
+
+    if (!form.email || !form.password) {
+      setErrorMessage('Please fill all the fields')
+      return 
+    }
+
+    try {
+      const signInAttempt = await signIn.create({
+        identifier: form.email,
+        password: form.password,
+      })
+
+      if (signInAttempt.status === 'complete') {
+        await setActive({ session: signInAttempt.createdSessionId })
+        router.replace('/(tabs)/home')
+      } else {
+        console.log(JSON.stringify(signInAttempt, null, 2))
+        setErrorMessage('Invalid data, try again')
+      }
+    } catch (err: any) {
+      console.log(JSON.stringify(err, null, 2))
+      setErrorMessage(err.errors[0].message)
+    }
   }
 
   return (
     <SafeAreaView className='bg-background w-screen h-full flex items-center'>
-      <Text className='text-white my-12 text-2xl font-psemibold'>
+      <Text className='text-white mt-12 mb-8 text-2xl font-psemibold'>
         Log in into {' '}
         <Text className='text-accent font-pextrabold text-3xl'>Night Flow</Text>
       </Text>
+
+      <Text className='text-red-600 text-base'>
+        {errorMessage}
+      </Text>
+
       <TextField
         containerStyles='w-full px-8'
         value={form.email}

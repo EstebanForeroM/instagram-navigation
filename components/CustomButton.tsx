@@ -13,7 +13,7 @@ interface Props {
 const CustomButton = (props: Props) => {
   return (
     <View className={`${props.containerStyles}`}>
-      <TouchableOpacity className={`${props.buttonStyles} h-16 w-full rounded-2xl flex justify-center items-center`}
+      <TouchableOpacity className={`h-16 w-full rounded-2xl flex justify-center items-center ${props.buttonStyles}`}
         onPress={props.onPress}
       >
         <Text className='text-white text font-pbold'>{props.text}</Text>
