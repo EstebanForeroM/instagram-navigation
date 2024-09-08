@@ -5,7 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import TextField from '@/components/TextField'
 import CustomButton from '@/components/CustomButton'
 import { Link, router } from 'expo-router'
-import { logger } from '@/lib/pino'
 
 interface SignInFormData {
   email: string,

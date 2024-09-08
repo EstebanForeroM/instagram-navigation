@@ -4,11 +4,12 @@ import React from 'react'
 interface Props {
   icon: React.ReactNode,
   onPress: () => void
+  containerStyles?: string
 }
 
 const IconButton = (props: Props) => {
   return (
-    <View>
+    <View className={props.containerStyles}>
       <TouchableOpacity onPress={props.onPress}>
         {props.icon}
       </TouchableOpacity>
