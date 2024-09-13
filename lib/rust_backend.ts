@@ -6,7 +6,7 @@ export const uploadPost = async (mediaContent: ImagePickerAsset, description: st
     const put_link_url = await ky.post("https://backendsocialnetwork-production.up.railway.app/post/upload", { 
       json: {
         post_text: description,
-        file_format: mediaContent.type  
+        file_format: getFileExtension(mediaContent.uri)  
       },
       headers: {
         'Authorization': `Bearer ${token}`
@@ -43,6 +43,15 @@ const getFileData = async (mediaContent: ImagePickerAsset) => {
   } catch (error) {
     console.error("Error getting file data:", error)
     throw error 
+  }
+}
+
+const getFileExtension = (uri: string) => {
+  const match = uri.match(/\.([^.]+)$/);
+  if (match) {
+    return match[1]; // Return the extension without the dot
+  } else {
+    throw new Error(`Unable to extract file extension from URI: ${uri}`);
   }
 }
 
