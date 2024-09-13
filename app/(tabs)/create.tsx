@@ -1,18 +1,20 @@
 
 import { View, Text, Image, TextInput } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as ImagePicker from 'expo-image-picker'
 import CustomButton from '@/components/CustomButton'
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import Entypo from '@expo/vector-icons/Entypo';
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import { Video } from 'expo-av'
+import { uploadPost } from '@/lib/rust_backend'
+import { useAuth } from '@clerk/clerk-expo'
 
 const CreatePage = () => {
 
   const [mediaSelected, setMediaSelected] = useState<null | ImagePicker.ImagePickerAsset>(null)
+  const [descriptionText, setDescriptionText] = useState('')
+  const { getToken } = useAuth()
 
   const openPicker = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -39,7 +41,14 @@ const CreatePage = () => {
                 containerStyles='m-0 p-0'
                 buttonStyles='bg-accent h-10 w-24'
                 text='Send'
-                onPress={() => {}}
+                onPress={async () => {
+                  const token = await getToken()
+                  if (!token) {
+                    console.error("No token found")
+                    return
+                  }
+                  uploadPost(mediaSelected, descriptionText, token)
+                }}
               />
             </View>
             {(mediaSelected.type === 'video' ?
@@ -60,6 +69,8 @@ const CreatePage = () => {
               placeholderTextColor='gray'
               multiline
               placeholder='Write something that you want to add'
+              value={descriptionText}
+              onChangeText={setDescriptionText}
             />
           </View>
 
