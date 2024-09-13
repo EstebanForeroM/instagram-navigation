@@ -16,4 +16,10 @@ const AuthLayout = () => {
   );
 }
 
+async function logging() {
+    let token_session = window.Clerk.session.getToken({ template: 'testing-template' })
+    let token_session1 = await token_session
+    console.log(token_session1)
+}
+
 export default AuthLayout
