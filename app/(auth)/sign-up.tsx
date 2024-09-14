@@ -1,5 +1,5 @@
-import Modal, { ReactNativeModal } from 'react-native-modal'
 import { View, Text } from 'react-native'
+import Modal, { ReactNativeModal } from 'react-native-modal'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import TextField from '@/components/TextField'

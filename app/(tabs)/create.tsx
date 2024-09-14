@@ -1,6 +1,6 @@
-
-import { View, Text, Image, TextInput } from 'react-native'
-import React, { useState } from 'react'
+import Modal, { ReactNativeModal } from 'react-native-modal'
+import { View, Text, Image, TextInput, ActivityIndicator } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as ImagePicker from 'expo-image-picker'
 import CustomButton from '@/components/CustomButton'
@@ -10,11 +10,29 @@ import { Video } from 'expo-av'
 import { uploadPost } from '@/lib/rust_backend'
 import { useAuth } from '@clerk/clerk-expo'
 
-const CreatePage = () => {
+import * as Location from 'expo-location'
 
+const CreatePage = () => {
   const [mediaSelected, setMediaSelected] = useState<null | ImagePicker.ImagePickerAsset>(null)
   const [descriptionText, setDescriptionText] = useState('')
+  const [isUploading, setIsUploading] = useState(false)
   const { getToken } = useAuth()
+
+  const [location, setLocation] = useState<null | Location.LocationObjectCoords>(null)
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync()
+      if (status !== 'granted') {
+        console.error('user did not gave permision to use his location')
+        return
+      }
+
+      const location = await Location.getCurrentPositionAsync()
+      console.log("The location of the user is: ", JSON.stringify(location.coords))
+      setLocation(location.coords)
+    })()
+  }, [])
 
   const openPicker = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -42,12 +60,14 @@ const CreatePage = () => {
                 buttonStyles='bg-accent h-10 w-24'
                 text='Send'
                 onPress={async () => {
+                  setIsUploading(true)
                   const token = await getToken()
                   if (!token) {
                     console.error("No token found")
                     return
                   }
-                  uploadPost(mediaSelected, descriptionText, token)
+                  uploadPost(mediaSelected, descriptionText, token, location)
+                  setIsUploading(false)
                 }}
               />
             </View>
@@ -82,6 +102,9 @@ const CreatePage = () => {
           </View>
         }
       </View>
+      <Modal isVisible={isUploading}>
+        <ActivityIndicator size={'large'} color={'#FF006E'}/>
+      </Modal>
     </SafeAreaView>
   )
 }

@@ -77,6 +77,7 @@ export default function RootLayout() {
           <Stack.Screen name="(chat)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" options={{ headerShown: false }}/>
           <Stack.Screen name="notification/notification" options={{ headerShown: false }} />
+          <Stack.Screen name="profile_custom/profile_custom" options={{ headerShown: false }} />
         </Stack>
       </ClerkLoaded>
     </ClerkProvider>

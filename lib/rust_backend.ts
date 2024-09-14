@@ -1,12 +1,14 @@
 import { ImagePickerAsset } from "expo-image-picker"
+import { LocationObjectCoords } from "expo-location"
 import ky from "ky"
 
-export const uploadPost = async (mediaContent: ImagePickerAsset, description: string, token: string) => {
+export const uploadPost = async (mediaContent: ImagePickerAsset, description: string, token: string, coords: LocationObjectCoords | null) => {
   try {
     const put_link_url = await ky.post("https://backendsocialnetwork-production.up.railway.app/post/upload", { 
       json: {
         post_text: description,
-        file_format: getFileExtension(mediaContent.uri)  
+        file_format: getFileExtension(mediaContent.uri),
+        post_location: coords
       },
       headers: {
         'Authorization': `Bearer ${token}`
