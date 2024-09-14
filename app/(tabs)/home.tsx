@@ -1,16 +1,46 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text, FlatList, RefreshControl } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import IconButton from '@/components/IconButton'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
 import { router } from 'expo-router';
+import { Post, getPosts } from '@/lib/rust_backend';
+import { useAuth } from '@clerk/clerk-expo';
+import PostItem from '@/components/PostItem';
 
 const Home = () => {
+
+  const [posts, setPosts] = useState<Post[]>([])
+  const { getToken } = useAuth()
+  const [refreshing, setRefreshing] = useState(false)
+
+  const onRefresh = async () => {
+    setRefreshing(true)
+    const token = await getToken()
+    const posts = await getPosts(token ?? '')
+    setPosts(posts)
+    setRefreshing(false)
+  }
+
+  useEffect(() => {
+    onRefresh()
+  }, [])
+
+
   return (
     <SafeAreaView className='bg-background w-screen h-full'>
       <HomeHeader/>
-      <Text className='text-white'>Home</Text>
+      <FlatList
+        data={posts}
+        keyExtractor={(post) => post.post_id}
+        renderItem={({ item }) => (
+          <PostItem post={item}/>
+        )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+        }
+      />
     </SafeAreaView>
   )
 }
@@ -36,6 +66,7 @@ const HomeHeader = () => {
         />
 
       </View>
+
     </View>
   )
 }

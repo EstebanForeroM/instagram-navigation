@@ -10,14 +10,13 @@ const ProfilePage = () => {
   const { signOut } = useClerk()
   const { user } = useUser()
 
-  const onSignOut = () => {
-    signOut()
+  const onSignOut = async () => {
+    await signOut()
     router.replace('/(auth)/sign-in')
   }
 
   return (
-    <SafeAreaView className='bg-background w-screen h-full p-4'>
-      <Text>ProfilePage</Text>
+    <SafeAreaView className='bg-background w-screen h-full p-4 pt-8'>
       <View className='w-full flex flex-row'>
         <Image
           source={{ uri: user?.imageUrl }}
