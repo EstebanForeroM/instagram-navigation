@@ -8,50 +8,14 @@ import { router } from 'expo-router';
 import { Post, getPosts } from '@/lib/rust_backend';
 import { useAuth } from '@clerk/clerk-expo';
 import PostItem from '@/components/PostItem';
+import PostList from '@/components/PostList';
 
 const Home = () => {
-  const { getToken } = useAuth()
-  const [posts, setPosts] = useState<Post[]>([])
-  const [refreshing, setRefreshing] = useState(false)
-  const [hasMore, setHasMore] = useState(true)
-  const [page, setPage] = useState(0)
-
-  const onRefresh = async () => {
-    if (!hasMore || refreshing) return;
-
-    setRefreshing(true)
-    const token = await getToken()
-    const newPosts = await getPosts(token ?? '', page)
-    setPage(page + 1)
-    if (newPosts.length === 0) {
-      setHasMore(false)
-    }
-    setPosts([...posts, ...newPosts])
-    setRefreshing(false)
-  }
-
-  const renderFooter = () => {
-    return (
-      hasMore && (
-        <View className='p-4'>
-          <ActivityIndicator size={'large'}/>
-        </View>
-      )
-    )
-  }
-
   return (
     <SafeAreaView className='bg-background w-screen h-full'>
       <HomeHeader/>
-      <FlatList
-        data={posts}
-        keyExtractor={(post) => post.post_id}
-        renderItem={({ item }) => (
-          <PostItem post={item}/>
-        )}
-        onEndReached={onRefresh}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={renderFooter}
+      <PostList
+        fetchPostFunction={getPosts}
       />
     </SafeAreaView>
   )

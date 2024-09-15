@@ -67,19 +67,58 @@ export interface Coords {
 }
 
 export const getPosts = async (token: string, page: number) => {
-  console.log("get posts called")
   const posts: Post[] = await ky(`post/latest/${page}`, { 
     prefixUrl: prefixUrl,
     headers: {
         'Authorization': `Bearer ${token}`
       },
   }).json();
-  console.log("get posts finished")
-
-
-  console.log(JSON.stringify(posts))
 
   return posts
+}
+
+export const getUserPosts = async (token: string, page: number) => {
+  const posts: Post[] = await ky(`post/user/${page}`, { 
+    prefixUrl: prefixUrl,
+    headers: {
+        'Authorization': `Bearer ${token}`
+      },
+  }).json();
+
+
+  return posts
+}
+
+export const getUserQuery = async (token: string, page: number, query: string) => {
+  console.log("getting user query: ", query)
+  const posts: Post[] = await ky(`post/search/${query}/${page}`, { 
+    prefixUrl: prefixUrl,
+    headers: {
+        'Authorization': `Bearer ${token}`
+      },
+  }).json();
+  console.log("finished user query: ", JSON.stringify(posts))
+
+  return posts
+}
+
+export const getVideoPost = async (token: string, offset: number) => {
+  let post: Post | undefined;
+
+  try {
+    post = await ky(`post/video/${offset}`, { 
+      prefixUrl: prefixUrl,
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    }).json();
+
+  } catch (err) {
+    post = undefined
+    console.error(`Error in get video post: `, err)
+  }
+  
+  return post
 }
 
 const getFileExtension = (uri: string) => {

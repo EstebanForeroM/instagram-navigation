@@ -51,6 +51,7 @@ const PostItem = ({ post }: Props) => {
             style={{ width: '100%', aspectRatio }}
             resizeMode={ResizeMode.CONTAIN}
             useNativeControls
+            shouldPlay
             onReadyForDisplay={(event) => {
               const { width, height } = event.naturalSize;
               if (width && height) {

@@ -40,7 +40,7 @@ const SignUp = () => {
 
   useEffect(() => {
     if (errorMessage !== '') {
-      setTimeout(() => setErrorMessage(''))
+      setTimeout(() => setErrorMessage(''), 4000)
     }
   }, [errorMessage])
 

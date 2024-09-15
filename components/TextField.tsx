@@ -8,6 +8,7 @@ interface Props {
   containerStyles?: string,
   textFieldStyles?: string,
   secureTextField?: boolean
+  onSubmit?: () => void
   onChange: (text: string) => void
 }
 
@@ -22,6 +23,7 @@ const TextField = (props: Props) => {
           placeholder={props.placeHolder}
           onChangeText={props.onChange}
           secureTextEntry={props.secureTextField}
+          onSubmitEditing={props.onSubmit}
         />
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

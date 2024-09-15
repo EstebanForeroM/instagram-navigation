@@ -5,14 +5,29 @@ import CustomButton from '@/components/CustomButton'
 import { router } from 'expo-router'
 import { useClerk, useUser } from '@clerk/clerk-expo'
 import PostItem from '@/components/PostItem'
-import { Post } from '@/lib/rust_backend'
+import { Post, getUserPosts } from '@/lib/rust_backend'
+import PostList from '@/components/PostList'
 
 const ProfilePage = () => {
   
+  
+
+  return (
+    <SafeAreaView className='bg-background w-screen h-full p-4 pt-8'>
+
+      <PostList
+        
+        fetchPostFunction={getUserPosts}
+        headerComponent={ProfileHeader}
+      />     
+    </SafeAreaView>
+  )
+}
+
+
+const ProfileHeader  = () => {
   const { signOut } = useClerk()
   const { user } = useUser()
-
-  const [userPost, setUserPost] = useState<Post[]>([])
 
   const onSignOut = async () => {
     await signOut()
@@ -20,7 +35,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <SafeAreaView className='bg-background w-screen h-full p-4 pt-8'>
+    <View>
       <View className='w-full flex flex-row'>
         <Image
           source={{ uri: user?.imageUrl }}
@@ -50,14 +65,8 @@ const ProfilePage = () => {
         onPress={onSignOut}
       />
       <Text className='text-accent text-lg font-pmedium my-4'>Your posts</Text>
-      <FlatList
-        data={userPost}
-        keyExtractor={(post) => post.post_id}
-        renderItem={({ item }) => (
-          <PostItem post={item}/>
-        )}
-      />
-    </SafeAreaView>
+
+    </View>
   )
 }
 
