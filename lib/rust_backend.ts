@@ -55,14 +55,20 @@ export interface Post {
   post_id: string,
   post_text: string,
   media_url: string,
-  user_id: string,
-  post_location: string,
+  username: string,
+  user_profile_img_url: string,
+  post_location: Coords,
   publishing_date: string
 }
 
-export const getPosts = async (token: string) => {
+export interface Coords {
+  longitude: string,
+  latitude: string
+}
+
+export const getPosts = async (token: string, page: number) => {
   console.log("get posts called")
-  const posts: Post[] = await ky("post/latest", { 
+  const posts: Post[] = await ky(`post/latest/${page}`, { 
     prefixUrl: prefixUrl,
     headers: {
         'Authorization': `Bearer ${token}`
@@ -79,7 +85,8 @@ export const getPosts = async (token: string) => {
 const getFileExtension = (uri: string) => {
   const match = uri.match(/\.([^.]+)$/);
   if (match) {
-    return match[1]; // Return the extension without the dot
+    console.log("The file extesion is: ", match[1])
+    return match[1]; 
   } else {
     throw new Error(`Unable to extract file extension from URI: ${uri}`);
   }

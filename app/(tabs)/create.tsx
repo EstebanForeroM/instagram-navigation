@@ -39,7 +39,7 @@ const CreatePage = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: false,
       quality: 0.5,
-      videoQuality: ImagePicker.UIImagePickerControllerQualityType.Medium,
+      videoQuality: ImagePicker.UIImagePickerControllerQualityType.Low,
     })
 
     if (result.canceled) { return }
@@ -67,6 +67,7 @@ const CreatePage = () => {
                     return
                   }
                   uploadPost(mediaSelected, descriptionText, token, location)
+                  setMediaSelected(null)
                   setIsUploading(false)
                 }}
               />

@@ -1,4 +1,4 @@
-import { View, Text, FlatList, RefreshControl } from 'react-native'
+import { View, Text, FlatList, RefreshControl, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import IconButton from '@/components/IconButton'
@@ -10,23 +10,35 @@ import { useAuth } from '@clerk/clerk-expo';
 import PostItem from '@/components/PostItem';
 
 const Home = () => {
-
-  const [posts, setPosts] = useState<Post[]>([])
   const { getToken } = useAuth()
+  const [posts, setPosts] = useState<Post[]>([])
   const [refreshing, setRefreshing] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [page, setPage] = useState(0)
 
   const onRefresh = async () => {
+    if (!hasMore || refreshing) return;
+
     setRefreshing(true)
     const token = await getToken()
-    const posts = await getPosts(token ?? '')
-    setPosts(posts)
+    const newPosts = await getPosts(token ?? '', page)
+    setPage(page + 1)
+    if (newPosts.length === 0) {
+      setHasMore(false)
+    }
+    setPosts([...posts, ...newPosts])
     setRefreshing(false)
   }
 
-  useEffect(() => {
-    onRefresh()
-  }, [])
-
+  const renderFooter = () => {
+    return (
+      hasMore && (
+        <View className='p-4'>
+          <ActivityIndicator size={'large'}/>
+        </View>
+      )
+    )
+  }
 
   return (
     <SafeAreaView className='bg-background w-screen h-full'>
@@ -37,9 +49,9 @@ const Home = () => {
         renderItem={({ item }) => (
           <PostItem post={item}/>
         )}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
-        }
+        onEndReached={onRefresh}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={renderFooter}
       />
     </SafeAreaView>
   )

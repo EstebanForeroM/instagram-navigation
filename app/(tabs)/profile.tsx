@@ -1,14 +1,18 @@
-import { View, Text, Image } from 'react-native'
-import React from 'react'
+import { View, Text, Image, FlatList } from 'react-native'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import CustomButton from '@/components/CustomButton'
 import { router } from 'expo-router'
 import { useClerk, useUser } from '@clerk/clerk-expo'
+import PostItem from '@/components/PostItem'
+import { Post } from '@/lib/rust_backend'
 
 const ProfilePage = () => {
   
   const { signOut } = useClerk()
   const { user } = useUser()
+
+  const [userPost, setUserPost] = useState<Post[]>([])
 
   const onSignOut = async () => {
     await signOut()
@@ -36,7 +40,7 @@ const ProfilePage = () => {
       </View>
       <CustomButton
         text='Modify profile'
-        containerStyles='my-12'
+        containerStyles='my-8'
         buttonStyles='bg-accent h-14'
         onPress={() => router.push('/profile_custom/profile_custom')}
       />
@@ -44,6 +48,14 @@ const ProfilePage = () => {
         text='Log out'
         buttonStyles='border border-red-500 h-12'
         onPress={onSignOut}
+      />
+      <Text className='text-accent text-lg font-pmedium my-4'>Your posts</Text>
+      <FlatList
+        data={userPost}
+        keyExtractor={(post) => post.post_id}
+        renderItem={({ item }) => (
+          <PostItem post={item}/>
+        )}
       />
     </SafeAreaView>
   )
