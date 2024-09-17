@@ -11,12 +11,16 @@ import { uploadPost } from '@/lib/rust_backend'
 import { useAuth } from '@clerk/clerk-expo'
 
 import * as Location from 'expo-location'
+import { CameraType } from 'expo-camera'
+import CameraComponent from '@/components/CameraComponents'
 
 const CreatePage = () => {
   const [mediaSelected, setMediaSelected] = useState<null | ImagePicker.ImagePickerAsset>(null)
   const [descriptionText, setDescriptionText] = useState('')
   const [isUploading, setIsUploading] = useState(false)
   const { getToken } = useAuth()
+
+  const [cameraActive, setCameraActive] = useState(true)
 
   const [location, setLocation] = useState<null | Location.LocationObjectCoords>(null)
 
@@ -106,8 +110,14 @@ const CreatePage = () => {
       <Modal isVisible={isUploading}>
         <ActivityIndicator size={'large'} color={'#FF006E'}/>
       </Modal>
+      <Modal isVisible={cameraActive}>
+        <CameraComponent
+          onGoBack={() => setCameraActive(false)}
+        />
+      </Modal>
     </SafeAreaView>
   )
 }
 
 export default CreatePage
+
