@@ -4,7 +4,12 @@ import ky from "ky"
 
 const prefixUrl = "https://backendsocialnetwork-production.up.railway.app/"
 
-export const uploadPost = async (mediaContent: ImagePickerAsset, description: string, token: string, coords: LocationObjectCoords | null) => {
+export interface ImageVideoAsset {
+  uri: string,
+  type: 'image' | 'video'
+}
+
+export const uploadPost = async (mediaContent: ImageVideoAsset, description: string, token: string, coords: LocationObjectCoords | null) => {
   try {
     const put_link_url = await ky.post("post/upload", { 
       json: {
@@ -35,7 +40,7 @@ export const uploadPost = async (mediaContent: ImagePickerAsset, description: st
   }
 }
 
-const getFileData = async (mediaContent: ImagePickerAsset) => {
+const getFileData = async (mediaContent: ImageVideoAsset) => {
   try {
     const response = await fetch(mediaContent.uri)
 

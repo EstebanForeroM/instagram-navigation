@@ -7,7 +7,7 @@ import CustomButton from '@/components/CustomButton'
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Video } from 'expo-av'
-import { uploadPost } from '@/lib/rust_backend'
+import { ImageVideoAsset, uploadPost } from '@/lib/rust_backend'
 import { useAuth } from '@clerk/clerk-expo'
 
 import * as Location from 'expo-location'
@@ -15,12 +15,12 @@ import { CameraType } from 'expo-camera'
 import CameraComponent from '@/components/CameraComponents'
 
 const CreatePage = () => {
-  const [mediaSelected, setMediaSelected] = useState<null | ImagePicker.ImagePickerAsset>(null)
+  const [mediaSelected, setMediaSelected] = useState<null | ImageVideoAsset>(null)
   const [descriptionText, setDescriptionText] = useState('')
   const [isUploading, setIsUploading] = useState(false)
   const { getToken } = useAuth()
 
-  const [cameraActive, setCameraActive] = useState(true)
+  const [cameraActive, setCameraActive] = useState(false)
 
   const [location, setLocation] = useState<null | Location.LocationObjectCoords>(null)
 
@@ -48,7 +48,12 @@ const CreatePage = () => {
 
     if (result.canceled) { return }
 
-      setMediaSelected(result.assets[0])
+    let asset = result.assets[0];
+
+    setMediaSelected({
+      uri: asset.uri,
+      type: asset.type ?? 'image'
+    });
   }
 
   return (
@@ -70,7 +75,7 @@ const CreatePage = () => {
                     console.error("No token found")
                     return
                   }
-                  uploadPost(mediaSelected, descriptionText, token, location)
+                  uploadPost({ uri: mediaSelected.uri, type: mediaSelected.type?? 'image' }, descriptionText, token, location)
                   setMediaSelected(null)
                   setIsUploading(false)
                 }}
@@ -104,15 +109,27 @@ const CreatePage = () => {
             <Text className='text-2xl text-center font-psemibold text-accent'>Upload a video</Text>
             <Text className='text-2xl text-center font-psemibold text-accent mb-24'>Or an image</Text>
             <FontAwesome name="cloud-upload" size={230} color="white" onPress={openPicker}/>
+            <CustomButton
+              text='Or use your camera'
+              onPress={() => {setCameraActive(true)}}
+              containerStyles='bg-accent rounded-2xl'
+            />
           </View>
         }
       </View>
       <Modal isVisible={isUploading}>
         <ActivityIndicator size={'large'} color={'#FF006E'}/>
       </Modal>
-      <Modal isVisible={cameraActive}>
+      <Modal isVisible={cameraActive} className='' hasBackdrop={false}>
         <CameraComponent
           onGoBack={() => setCameraActive(false)}
+          onGaleryButtonPress={() => {
+            setCameraActive(false)
+            openPicker()
+          }}
+          onResourceTaken={(asset) => {
+            setMediaSelected(asset)
+          }}
         />
       </Modal>
     </SafeAreaView>

@@ -9,6 +9,11 @@ interface Props {
 const PostItem = ({ post }: Props) => {
   const isImage = isUrlContainImage(post.media_url);
   const [aspectRatio, setAspectRatio] = useState<number>(1);
+  const [location, setLocation] = useState('')
+
+  useEffect(() => {
+
+  }, [])
 
   useEffect(() => {
     if (post.media_url && isImage) {
@@ -26,6 +31,7 @@ const PostItem = ({ post }: Props) => {
 
   return (
     <View className='mb-4'>
+      
       <View className='flex flex-row items-center h-14 p-4'>
         <Image 
           source={{ uri: post.user_profile_img_url }}
@@ -39,6 +45,9 @@ const PostItem = ({ post }: Props) => {
         </Text>
       </View>
       <View className='justify-center items-center'>
+      <Text className='text-white absolute top-2 right-1 z-50 bg-black rounded-full p-2'>
+        Location
+      </Text>
         {isImage ? (
           <Image
             source={{ uri: post.media_url }}
@@ -51,7 +60,6 @@ const PostItem = ({ post }: Props) => {
             style={{ width: '100%', aspectRatio }}
             resizeMode={ResizeMode.CONTAIN}
             useNativeControls
-            shouldPlay
             onReadyForDisplay={(event) => {
               const { width, height } = event.naturalSize;
               if (width && height) {
