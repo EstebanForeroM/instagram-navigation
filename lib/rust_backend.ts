@@ -121,9 +121,30 @@ export const getVideoPost = async (token: string, offset: number) => {
   return post
 }
 
-export const createChat = async (chatName: string) => {
-  ky.post(`chat/create/${chatName}`)
+export const createChat = async (token: string, chatName: string) => {
+  ky.post(`chat/create/${chatName}`, {
+    prefixUrl: prefixUrl,
+    headers: {
+        'Authorization': `Bearer ${token}`
+    },
+  })
     .catch(err => console.log("Error creating the chat: ", err));
+}
+
+export interface ChatData {
+  chat_id: string,
+  chat_name: string
+}
+
+export const getUserChats = async (token: string) => {
+  let chats = ky('chat/user', {
+    prefixUrl: prefixUrl,
+    headers: {
+        'Authorization': `Bearer ${token}`
+    },
+  }).json<ChatData[]>()
+
+  return chats
 }
 
 const getFileExtension = (uri: string) => {

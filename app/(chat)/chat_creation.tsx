@@ -5,9 +5,14 @@ import { router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import TextField from '@/components/TextField'
 import CustomButton from '@/components/CustomButton'
+import { createChat } from '@/lib/rust_backend'
+import { useAuth } from '@clerk/clerk-expo'
+import ReactNativeModal from 'react-native-modal'
+import { Alert } from 'react-native'
 
 const ChatCreation = () => {
   const [chatName, setChatName] = useState('')
+  const { getToken } = useAuth()
 
   return (
     <SafeAreaView className='bg-background w-screen h-full'>
@@ -26,7 +31,11 @@ const ChatCreation = () => {
         buttonStyles='bg-accent h-12 mt-4'
         containerStyles='px-2'
         text='Create chat'
-        onPress={() => {}}
+        onPress={async () => {
+          const token = await getToken() ?? ''
+          await createChat(token, chatName)
+          router.back()
+        }}
       />
     </SafeAreaView>
   )
