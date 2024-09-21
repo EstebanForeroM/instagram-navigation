@@ -4,6 +4,8 @@ import TextField from '@/components/TextField'
 import GoBackHeader from '@/components/GoBackHeader'
 import { router } from 'expo-router'
 import { useUser } from '@clerk/clerk-expo'
+import IconButton from '@/components/IconButton'
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const Inbox = () => {
   const { user } = useUser()
@@ -22,6 +24,11 @@ const Inbox = () => {
         textFieldStyles='rounded-full h-12 bg-background'
         value={searchResult}
         onChange={(newSearch) => setSearchResult(newSearch)}
+      />
+      <IconButton
+        containerStyles='absolute bottom-4 right-4 p-2'
+        icon={<AntDesign name="pluscircleo" size={32} color="#FF006E"/>}
+        onPress={() => router.push('/(chat)/chat_creation')}
       />
     </SafeAreaView>
   )

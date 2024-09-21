@@ -62,13 +62,8 @@ export interface Post {
   media_url: string,
   username: string,
   user_profile_img_url: string,
-  post_location: Coords,
+  post_city: string,
   publishing_date: string
-}
-
-export interface Coords {
-  longitude: string,
-  latitude: string
 }
 
 export const getPosts = async (token: string, page: number) => {
@@ -124,6 +119,11 @@ export const getVideoPost = async (token: string, offset: number) => {
   }
   
   return post
+}
+
+export const createChat = async (chatName: string) => {
+  ky.post(`chat/create/${chatName}`)
+    .catch(err => console.log("Error creating the chat: ", err));
 }
 
 const getFileExtension = (uri: string) => {

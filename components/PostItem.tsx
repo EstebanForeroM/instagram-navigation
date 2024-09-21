@@ -9,11 +9,6 @@ interface Props {
 const PostItem = ({ post }: Props) => {
   const isImage = isUrlContainImage(post.media_url);
   const [aspectRatio, setAspectRatio] = useState<number>(1);
-  const [location, setLocation] = useState('')
-
-  useEffect(() => {
-
-  }, [])
 
   useEffect(() => {
     if (post.media_url && isImage) {
@@ -32,21 +27,23 @@ const PostItem = ({ post }: Props) => {
   return (
     <View className='mb-4'>
       
-      <View className='flex flex-row items-center h-14 p-4'>
+      <View className='flex flex-row items-center h-14 p-4 absolute z-50'>
         <Image 
           source={{ uri: post.user_profile_img_url }}
           className='w-9 h-9 rounded-full mr-3'
         />
-        <Text className='text-white font-pmedium grow'>
-          {post.username}
-        </Text>
-        <Text className='text-white font-pmedium'>
-          {post.publishing_date}
-        </Text>
+        <View className='bg-black flex-row w-60 rounded-full border-black border-2'>
+          <Text className='text-white font-pmedium grow'>
+            {post.username}
+          </Text>
+          <Text className='text-white font-pmedium'>
+            {post.publishing_date}
+          </Text>
+        </View>
       </View>
       <View className='justify-center items-center'>
-      <Text className='text-white absolute top-2 right-1 z-50 bg-black rounded-full p-2'>
-        Location
+        <Text className='text-white absolute top-2 right-1 z-50 bg-black rounded-full p-2'>
+          {post.post_city}
       </Text>
         {isImage ? (
           <Image

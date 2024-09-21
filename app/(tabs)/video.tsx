@@ -84,6 +84,9 @@ const VideoPage = () => {
             <Text className='text-white font-pmedium'>
               {post.publishing_date}
             </Text>
+            <Text className='text-white font-pmedium ml-4'>
+              {post.post_city}
+            </Text>
           </View>
           <Video
             source={{ uri: post.media_url }}
