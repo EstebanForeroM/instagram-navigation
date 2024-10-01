@@ -7,6 +7,7 @@ interface Props {
   text?: string
   containerStyles?: string
   onPressBack?: () => void
+  children?: React.ReactNode
 }
 
 const GoBackHeader = (props: Props) => {
@@ -18,6 +19,7 @@ const GoBackHeader = (props: Props) => {
       <Text className='text-white text-base font-psemibold ml-4'>
         {props.text}
       </Text>
+      {props.children}
     </View>
   )
 }

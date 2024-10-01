@@ -12,6 +12,7 @@ interface Props {
 
 interface PostsInfo {
   quantity: number
+  refetchOnTime: boolean
 }
 
 interface ResetControl {
@@ -31,6 +32,7 @@ const PostList = (props: Props) => {
     setPage(0)
     setPosts([])
     setHasMore(true)
+    setRefreshing(false)
     onRefresh()
   }, [props.resetControl?.reset])
 

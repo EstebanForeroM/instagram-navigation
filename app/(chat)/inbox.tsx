@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import TextField from '@/components/TextField'
 import GoBackHeader from '@/components/GoBackHeader'
@@ -12,9 +12,10 @@ import CustomButton from '@/components/CustomButton'
 
 const Inbox = () => {
   const { user } = useUser()
-  const [searchResult, setSearchResult] = useState('')
+  const [searchQuery, setSearchResult] = useState('')
   const [userChats, setUserChats] = useState<ChatData[]>([]);
   const { getToken } = useAuth()
+  const [hasChanged, setHasChanged] = useState(false)
 
   useEffect(() => {
     const retrieveUserChats = async () => {
@@ -24,7 +25,7 @@ const Inbox = () => {
       setUserChats(userChats)
     }
     retrieveUserChats()
-  }, [])
+  }, [hasChanged])
 
   return (
     <SafeAreaView className='bg-background w-screen h-full'>
@@ -36,7 +37,7 @@ const Inbox = () => {
         placeHolder='Search a chat'
         containerStyles='px-4 mt-4'
         textFieldStyles='rounded-full h-12 bg-background'
-        value={searchResult}
+        value={searchQuery}
         onChange={(newSearch) => setSearchResult(newSearch)}
       />
       <FlatList
@@ -47,14 +48,17 @@ const Inbox = () => {
           <CustomButton
             text={userChatRender.item.chat_name}
             buttonStyles='border-t border-b border-accent h-14'
-            onPress={() => router.push(`/(chat)/${userChatRender.item}`)}
+            onPress={() => router.push(`/(chat)/${userChatRender.item.chat_id}`)}
           />
         )}
       />
       <IconButton
         containerStyles='absolute bottom-4 right-4 p-2'
         icon={<AntDesign name="pluscircleo" size={32} color="#FF006E"/>}
-        onPress={() => router.push('/(chat)/chat_creation')}
+        onPress={() => {
+          router.push('/(chat)/chat_creation')
+          setHasChanged(!hasChanged)
+        }}
       />
     </SafeAreaView>
   )

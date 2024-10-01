@@ -67,12 +67,15 @@ export interface Post {
 }
 
 export const getPosts = async (token: string, page: number) => {
+  console.log('get posts is being executed')
   const posts: Post[] = await ky(`post/latest/${page}`, { 
     prefixUrl: prefixUrl,
     headers: {
         'Authorization': `Bearer ${token}`
       },
   }).json();
+
+  console.log('the posts are: ', posts)
 
   return posts
 }
@@ -90,7 +93,7 @@ export const getUserPosts = async (token: string, page: number) => {
 }
 
 export const getUserQuery = async (token: string, page: number, query: string) => {
-  console.log("getting user query: ", query)
+  console.log("getting user query: ", query, " with index of: ", page)
   const posts: Post[] = await ky(`post/search/${query}/${page}`, { 
     prefixUrl: prefixUrl,
     headers: {
@@ -155,5 +158,32 @@ const getFileExtension = (uri: string) => {
   } else {
     throw new Error(`Unable to extract file extension from URI: ${uri}`);
   }
+}
+
+export interface UserData {
+  username: string,
+  user_id: string
+}
+
+export const get_users_by_username = (query: string) => {
+  let query_trimmed = query.trim()
+  console.log(`|user/username/${query_trimmed}|`)
+  let users = ky(`user/username/${query_trimmed}`,
+    { prefixUrl: prefixUrl}).json<UserData[]>()
+
+  return users
+}
+
+export const add_users_to_chat = (token: string, users_id: string[], chat_id: string) => {
+  ky.put('chat/add', {
+    prefixUrl: prefixUrl,
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+    json: {
+      chat_id: chat_id,
+      users_id: users_id
+    }
+  })
 }
 

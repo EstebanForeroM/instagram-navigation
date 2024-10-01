@@ -1,13 +1,11 @@
-import { View, Text, FlatList, RefreshControl, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text } from 'react-native'
+import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import IconButton from '@/components/IconButton'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
 import { router } from 'expo-router';
-import { Post, getPosts } from '@/lib/rust_backend';
-import { useAuth } from '@clerk/clerk-expo';
-import PostItem from '@/components/PostItem';
+import { getPosts } from '@/lib/rust_backend';
 import PostList from '@/components/PostList';
 
 const Home = () => {
@@ -42,7 +40,6 @@ const HomeHeader = () => {
         />
 
       </View>
-
     </View>
   )
 }
