@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { Post } from '@/lib/rust_backend'
 import { useAuth } from '@clerk/clerk-expo'
 import PostItem from './PostItem'
+import { keepPreviousData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query'
 
 interface Props {
   fetchPostFunction: (token: string, page: number) => Promise<Post[]>
   headerComponent?: () => React.ReactNode
   resetControl?: ResetControl
+  postsTag: string
 }
 
 interface PostsInfo {
@@ -24,37 +26,43 @@ const PostList = (props: Props) => {
   const [refreshing, setRefreshing] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const [page, setPage] = useState(0)
-  const [posts, setPosts] = useState<Post[]>([])
 
-  
-  useEffect(() => {
-    console.log('reset has changed')
-    setPage(0)
-    setPosts([])
-    setHasMore(true)
-    setRefreshing(false)
-    onRefresh()
-  }, [props.resetControl?.reset])
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+    refetch
+  } = useInfiniteQuery({
+    queryKey: [props.postsTag],
+    queryFn: async ({ pageParam }) => {
+      const token = await getToken() ?? ''
+      return props.fetchPostFunction(token, pageParam)
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
 
-  console.log('the page is: ', page)
+      if (lastPage.length === 0) {
+        return undefined
+      }
 
-  const onRefresh = async () => {
-    if (!hasMore || refreshing) return;
+      return lastPageParam + 1
+    },
+    getPreviousPageParam: (firstPage, allPages, firstPageParam) => {
+      if (firstPageParam <= 1) {
+        return undefined
+      }
 
-    setRefreshing(true)
-    const token = await getToken()
-    const newPosts = await props.fetchPostFunction(token ?? '', page)
-    setPage(page + 1)
-    if (newPosts.length === 0) {
-      setHasMore(false)
+      return firstPageParam - 1;
     }
-    setPosts([...posts, ...newPosts])
-    setRefreshing(false)
-  }
+  })
 
   const renderFooter = () => {
     return (
-      hasMore && (
+      !hasNextPage && (
         <View className='p-4'>
           <ActivityIndicator size={'large'}/>
         </View>
@@ -64,20 +72,22 @@ const PostList = (props: Props) => {
 
   return (
     <FlatList
-      data={posts}
+      data={data?.pages.flat()}
       keyExtractor={(post) => post.post_id}
       renderItem={({ item }) => (
         <PostItem post={item}/>
       )}
       ListHeaderComponent={props.headerComponent}
-      onEndReached={onRefresh}
+      onEndReached={() => {
+        if (!hasNextPage || isFetchingNextPage) {
+          fetchNextPage()
+        }
+      }}
       onEndReachedThreshold={0.5}
       ListFooterComponent={renderFooter}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={() => {
-          setPage(0)
-          setPosts([])
-          onRefresh()
+          refetch()
         }}/>
       }
     />

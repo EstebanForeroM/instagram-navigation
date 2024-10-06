@@ -16,7 +16,7 @@ const ProfilePage = () => {
     <SafeAreaView className='bg-background w-screen h-full p-4 pt-8'>
 
       <PostList
-        
+        postsTag='profile'       
         fetchPostFunction={getUserPosts}
         headerComponent={ProfileHeader}
       />     

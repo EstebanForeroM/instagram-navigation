@@ -14,7 +14,7 @@ const SearchPage = () => {
     <SafeAreaView className='bg-background w-screen h-full'>
       <TextField
         placeHolder='Search Something'
-        containerStyles='px-4 mt-4'
+        containerStyles='px-4 my-4'
         textFieldStyles='rounded-full h-12 bg-background'
         value={searchResult}
         onChange={(newSearch) => setSearchResult(newSearch)}
@@ -22,6 +22,7 @@ const SearchPage = () => {
       />
 
       <PostList
+        postsTag='search'
         fetchPostFunction={async (token, page) => {
           console.log("fetch post function executed, in search.tsx")
           return await getUserQuery(token, page, searchResult)

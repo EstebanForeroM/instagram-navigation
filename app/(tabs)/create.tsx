@@ -1,5 +1,5 @@
 import Modal, { ReactNativeModal } from 'react-native-modal'
-import { View, Text, Image, TextInput, ActivityIndicator } from 'react-native'
+import { View, Text, Image, TextInput, ActivityIndicator, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as ImagePicker from 'expo-image-picker'
@@ -13,6 +13,7 @@ import { useAuth } from '@clerk/clerk-expo'
 import * as Location from 'expo-location'
 import { CameraType } from 'expo-camera'
 import CameraComponent from '@/components/CameraComponents'
+import { useQueryClient } from '@tanstack/react-query'
 
 const CreatePage = () => {
   const [mediaSelected, setMediaSelected] = useState<null | ImageVideoAsset>(null)
@@ -21,8 +22,8 @@ const CreatePage = () => {
   const { getToken } = useAuth()
 
   const [cameraActive, setCameraActive] = useState(false)
-
   const [location, setLocation] = useState<null | Location.LocationObjectCoords>(null)
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     (async () => {
@@ -37,6 +38,20 @@ const CreatePage = () => {
       setLocation(location.coords)
     })()
   }, [])
+
+  if (!location) {
+    return <TouchableOpacity onPress={async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync()
+      if (status !== 'granted') {
+        console.error('user did not gave permision to use his location')
+        return
+      }
+
+      const location = await Location.getCurrentPositionAsync()
+      console.log("The location of the user is: ", JSON.stringify(location.coords))
+      setLocation(location.coords)
+    }}><Text>We need permissions to use your location</Text></TouchableOpacity>
+  }
 
   const openPicker = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -76,6 +91,7 @@ const CreatePage = () => {
                     return
                   }
                   uploadPost({ uri: mediaSelected.uri, type: mediaSelected.type?? 'image' }, descriptionText, token, location)
+                  queryClient.invalidateQueries({ queryKey: ['profile'] })
                   setMediaSelected(null)
                   setIsUploading(false)
                 }}
