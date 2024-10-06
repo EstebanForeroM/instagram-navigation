@@ -9,10 +9,12 @@ import { createChat } from '@/lib/rust_backend'
 import { useAuth } from '@clerk/clerk-expo'
 import ReactNativeModal from 'react-native-modal'
 import { Alert } from 'react-native'
+import { useQueryClient } from '@tanstack/react-query'
 
 const ChatCreation = () => {
   const [chatName, setChatName] = useState('')
   const { getToken } = useAuth()
+  const queryClient = useQueryClient()
 
   return (
     <SafeAreaView className='bg-background w-screen h-full'>
@@ -34,6 +36,7 @@ const ChatCreation = () => {
         onPress={async () => {
           const token = await getToken() ?? ''
           await createChat(token, chatName)
+          queryClient.invalidateQueries({ queryKey: ["chats"] })
           router.back()
         }}
       />

@@ -9,23 +9,21 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { ChatData, getUserChats } from '@/lib/rust_backend'
 import { FlatList, Text } from 'react-native'
 import CustomButton from '@/components/CustomButton'
+import { useQuery } from '@tanstack/react-query'
 
 const Inbox = () => {
   const { user } = useUser()
   const [searchQuery, setSearchResult] = useState('')
-  const [userChats, setUserChats] = useState<ChatData[]>([]);
   const { getToken } = useAuth()
   const [hasChanged, setHasChanged] = useState(false)
 
-  useEffect(() => {
-    const retrieveUserChats = async () => {
+  const { data } = useQuery({
+    queryKey: ["chats"],
+    queryFn: async () => {
       const token = await getToken()
-      const userChats = await getUserChats(token ?? '')
-
-      setUserChats(userChats)
+      return await getUserChats(token ?? '')
     }
-    retrieveUserChats()
-  }, [hasChanged])
+  })
 
   return (
     <SafeAreaView className='bg-background w-screen h-full'>
@@ -41,7 +39,7 @@ const Inbox = () => {
         onChange={(newSearch) => setSearchResult(newSearch)}
       />
       <FlatList
-        data={userChats}
+        data={data}
         keyExtractor={userChat => userChat.chat_id}
         className='mt-8'
         renderItem={userChatRender => (
